@@ -1,0 +1,136 @@
+Hangman Project. 
+Here we have the hangman project. Once you run it, a phrase made up of asterisks will appear. 
+You can then play Hangman using this code by entering in letters one at a time.
+*/
+import java.util.Scanner;
+//class Hangman that has the instance variables.
+public class HangManProject22 {
+    private StringBuilder output = new StringBuilder(""); //Stores StringBuilder for output when user inputs used letter.
+    private StringBuilder guesser = new StringBuilder(""); //Stores letters that have been used.
+    private final StringBuilder hide = new StringBuilder(""); // Stores phrase with asterisks.
+    private static String randomWord = new String(" "); // Stores random phrase
+    private int len; //Length of randomWord
+    private int lives = 8;
+    //No argument constructor
+    public HangManProject22() {
+        output = new StringBuilder("");
+        guesser = new StringBuilder("");
+
+    }
+    //Array that stores the list of phrases
+    private final String[] words = {
+        "i like pie",
+        "eat good food",
+        "try this game",
+        "kid at heart",
+        "atlantic ocean",
+        "indian ocean basin",
+        "vancouver canada",
+        "pacific ocean",
+        "beijing china",
+        "toronto canada"
+    };
+
+    public String getWord() //returns random word from the words array
+    {
+        int rand = (int)(Math.random() * (words.length)); //randomizing choices
+        randomWord = words[rand];
+        len = randomWord.length();
+        this.hidden();
+        return randomWord;
+    }
+    //Creates StringBuider of "*" to act as a hidden phrase.
+    public StringBuilder hidden() {
+        while (len > 0) { //filling up the variable "hide" with "*"
+            hide.append(("*"));
+            len--;
+        } //Creates spaces between the words of the asterisk
+        for (int i = 0; i < randomWord.length(); i++) {
+            if (randomWord.substring(i, i + 1).equals(" ")) {
+                hide.replace(i, i + 1, " ");
+            } //replaces * with spaces where they are necessary to separate words
+        }
+        return hide;
+    }
+    public StringBuilder getHiddenWord() {
+        return hide;
+    }
+    //Instructions for user
+    public String starter() {
+        return "Hangman is here. Instructions: " +
+            "\nHere you are given a hidden word and you have to guess the letters correctly." +
+            "\nIf you guess wrong, you lose a life. You have 8 lives." +
+            "\nIf you lose all 8 lives you lose the game." +
+            "\nIf you guess the all the characters of the word correctly, you win" +
+            "\nYou will not be penalized for guessing special symbols" +
+            "\nYou will not be penalized for guessing a character twice" +
+            "\n Word you are trying to guess:";
+    }
+    //Returns saying to input another character
+    public StringBuilder gamer(String s) {
+        StringBuilder wrong = new StringBuilder("Incorrect.");
+        if (s.length() == 1) { //Checks to see if user input only one character
+            if (!s.matches("[^A-Za-z0-9]+")) { //Checks to see if input is a letter or digit
+                if (guesser.indexOf(s) != -1) { //Checks to see if you already used that letter
+                    output.append("\n" + "You already guessed this letter. Try again." + "\n" + "Phrase: " + hide);
+                    System.out.println();
+                    return output;
+                }
+                if (randomWord.indexOf(s) == -1) { //Checks to letter is not in the phrase
+                    lives--; //Lives go down by one
+                    guesser.append(s).append(" ");
+                    return wrong.append("Hidden Phrase: ").append(hide); //Returns current hidden phrase
+                }
+
+                for (int j = 0; j < randomWord.length(); j++) {
+                    if (s.substring(0, 1).equals(randomWord.substring(j, j + 1))) //Letter is correct
+                    {
+
+                        hide.replace(j, j + 1, s); //Replaces asterisks with correct letters
+                    }
+                }
+                guesser.append(s).append(" ");
+                return hide;
+            }
+            StringBuilder stringer2 = new StringBuilder("Only input a letter or digit please");
+            System.out.println();
+            return stringer2;
+        }
+        StringBuilder stringer = new StringBuilder("Only input one letter please");
+        System.out.println();
+        return stringer;
+    }
+    //Returns true if the "hide" phrase does not have anymore asterisks and says you won.
+    public boolean gameOver() {
+        if (lives == 0) {
+            System.out.println("You lost!"); //Says you lost if your lives went down to 0
+        } else if (hide.indexOf("*") == -1) {
+            System.out.println("You won!");
+            System.out.println("Phrase was : " + hide);
+            return true;
+        }
+        return false; //Returns false if it is none of the above
+
+    } //Main
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        HangManProject22 games = new HangManProject22(); //Creates object games
+        System.out.println(games.starter());
+        String realWord = games.getWord();
+        System.out.println(games.getHiddenWord());
+        int counter = 0;
+        while (!games.gameOver() && games.lives > 0) { //Loop continues until either lives is 0 or you win
+            System.out.println("Enter a letter");
+            String letter = in .next();
+            String s;
+            s = letter.toLowerCase(); //Changes input to lower case
+            System.out.println(games.gamer(s)); //Prints hidden phrase or phrase that says input doesn't work and try again.
+            System.out.println("Lives You have left: " + games.lives);
+            System.out.println("Letters that you used already: " + games.guesser);
+            if (games.gameOver()) //Returns true if game is won and it breaks the while loop.
+                break;
+
+            System.out.println();
+        }
+    }
+}

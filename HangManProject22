@@ -1,3 +1,4 @@
+/*
 Hangman Project. 
 Here we have the hangman project. Once you run it, a phrase made up of asterisks will appear. 
 You can then play Hangman using this code by entering in letters one at a time.
